@@ -1,0 +1,97 @@
+int cmp(const void* a, const void* b) 
+{
+    return (*(int*)a - *(int*)b);
+}
+
+int* majorityElement(int* nums, int numsSize, int* returnSize) {
+    if (numsSize == 1) 
+    {
+        *returnSize = 1;
+        return nums;
+    }
+    if (numsSize == 2 && nums[0] != nums[1]) 
+    {
+        *returnSize = 2;
+        return nums;
+    }
+    qsort(nums, numsSize, sizeof(int), cmp); // Sort the input array.
+    int* ans = (int*)malloc(numsSize * sizeof(int)); // Use an array to store unique majority elements.
+    int count = 1 , found; // Initialize the size of the set and  Initialize a count variable to track element frequencies.
+    *returnSize = 0;
+    for (int i = 1 ; i < numsSize ; i++) 
+    {
+        if (nums[i - 1] == nums[i]) 
+        {
+            count++;
+            if (count > (numsSize / 3)) 
+            {
+                found = 0;
+                for (int j = 0 ; j < (*returnSize) ; j++)  // Check if the element already exists in the set.
+                {
+                    if (ans[j] == nums[i]) 
+                    {
+                        found = 1;
+                        break;
+                    }
+                }
+                if (!found) 
+                    ans[(*returnSize)++] = nums[i]; // Add the element to the set if it's a majority element.
+            }
+        } 
+        else 
+            count = 1; // Reset the count when encountering a different element.
+    }
+    return ans;
+}
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+int cmp(const void* a, const void* b)
+{
+    return (*(int*)a - *(int*)b);
+}
+
+int* majorityElement(int* nums, int numsSize, int* returnSize) {
+    int cnt1 = 0, cnt2 = 0 , el1 = 0, el2 = 0; // Initialize counters for two potential majority elements. and Initialize variables to store the two potential majority elements.
+    for (int i = 0; i < numsSize; i++) // First pass to find potential majority elements.
+    {
+        if (!cnt1 && nums[i] != el2) 
+        {
+            cnt1 = 1;
+            el1 = nums[i];
+        } 
+        else if (!cnt2 && nums[i] != el1) 
+        {
+            cnt2 = 1;
+            el2 = nums[i];
+        } 
+        else if (el1 == nums[i])
+            cnt1++;
+        else if (el2 == nums[i])
+            cnt2++;
+        else 
+        {
+            cnt1--;
+            cnt2--;
+        }
+    }
+    *returnSize = 0;
+    cnt1 = 0;
+    cnt2 = 0;
+    for (int i = 0; i < numsSize; i++) // Second pass to count occurrences of the potential majority elements.
+    {
+        if (el1 == nums[i])
+            cnt1++;
+        else if (el2 == nums[i])
+            cnt2++;
+    }
+    if (cnt1 > numsSize / 3) 
+        nums[(*returnSize)++] = el1;
+    if (cnt2 > numsSize / 3) 
+        nums[(*returnSize)++] = el2;
+    return nums;
+}
